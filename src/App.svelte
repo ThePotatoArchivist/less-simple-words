@@ -1,11 +1,40 @@
 <script lang="ts">
-    import SimpleWordInput from "./lib/SimpleWordInput.svelte";
+    import Client from "./Client.svelte";
+    import Host from "./Host.svelte";
 
-    
+    let userId: string = ''
+    let partialSessionId: string = ''
+    let connect = false
+    let host = false
+
+    $: sessionId = `less-simple-words-${partialSessionId}`
 </script>
 
 <main>
-    <SimpleWordInput />
+    {#if connect}
+        {#if host}
+            <Host {userId} {sessionId} />
+        {:else}
+            <Client {userId} {sessionId} />
+        {/if}
+    {:else}
+        <p>
+            <label>
+                User ID
+                <input bind:value={userId} />
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Session ID
+                <input bind:value={partialSessionId} />
+            </label>
+        </p>
+
+        <button on:click={() => {connect = true; host = true;}}>Start Game</button>
+        <button on:click={() => connect = true}>Join Game</button>
+    {/if}
 </main>
 
 <style>

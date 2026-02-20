@@ -4,12 +4,16 @@
 
     export let value = ""
     export let active = true
+    export let valid = "" // Read-only
+    export let hasInvalid = false // Read-only
 
     $: index = value.search(NON_MATCHING_WORDS)
     $: [invalid] = value.match(NON_MATCHING_WORDS) ?? []
+    $: hasInvalid = invalid !== undefined
 
     $: valid = index < 0 ? value : value.substring(0, index)
     $: ignored = index < 0 ? undefined : value.substring(index + (invalid?.length ?? 0))
+    
 
     const onKeydown: KeyboardEventHandler<Window> = event => {
         if (!active) return
