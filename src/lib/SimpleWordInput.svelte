@@ -3,9 +3,11 @@
     import { NON_MATCHING_WORDS } from "../words";
 
     export let value = ""
-    export let active = true
+    export let requireFocus = false
     export let valid = "" // Read-only
     export let hasInvalid = false // Read-only
+
+    let active = !requireFocus
 
     $: index = value.search(NON_MATCHING_WORDS)
     $: [invalid] = value.match(NON_MATCHING_WORDS) ?? []
@@ -31,9 +33,11 @@
     }
 </script>
 
-<svelte:window on:keydown={onKeydown} />
+<svelte:window on:keydown={onKeydown} on:click={() => { if (requireFocus) active = false }} />
 
-<div class="input">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="input" on:click|stopPropagation={() => { if (requireFocus) active = true }}>
     <!--Weird spacing necessary to avoid whitespace-->
     <span>{valid}</span>{
     #if invalid}
@@ -42,8 +46,9 @@
     #if ignored}
         <span class="ignored">{ignored}</span>
     {/if}{
-    #if active}
+    #if active}{#key value}
         <div class="cursor"></div>
+    {/key}
     {/if}
 </div>
 
@@ -70,7 +75,7 @@
     }
 
     @keyframes blink {
-        0% { visibility: hidden; }
-        50% { visibility: visible; }
+        0% { visibility: visible; }
+        50% { visibility: hidden; }
     }
 </style>

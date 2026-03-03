@@ -1,21 +1,23 @@
 <script lang="ts">
     import Client from "./Client.svelte";
     import Host from "./Host.svelte";
+    import Mock from "./Mock.svelte";
 
     let userId: string = ''
     let partialSessionId: string = ''
-    let connect = false
-    let host = false
+    let connectionType: 'host' | 'client' | 'mock' | undefined = undefined
 
     $: sessionId = `lsw-${partialSessionId}`
 </script>
 
 <main>
-    {#if connect}
-        {#if host}
+    {#if connectionType}
+        {#if connectionType === 'host'}
             <Host {userId} {sessionId} />
-        {:else}
+        {:else if connectionType === 'client'}
             <Client {userId} {sessionId} />
+        {:else if connectionType === 'mock'}
+            <Mock {userId} />
         {/if}
     {:else}
         <p>
@@ -32,8 +34,11 @@
             </label>
         </p>
 
-        <button on:click={() => {connect = true; host = true;}}>Start Game</button>
-        <button on:click={() => connect = true}>Join Game</button>
+        <button on:click={() => connectionType = 'host'}>Start Game</button>
+        <button on:click={() => connectionType = 'client'}>Join Game</button>
+        {#if import.meta.env.DEV}
+            <button on:click={() => connectionType = 'mock'}>Mock Game</button>
+        {/if}
     {/if}
 </main>
 

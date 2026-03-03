@@ -4,6 +4,7 @@
 
     export let state: GameState
     export let userId: string
+    export let requireFocus: boolean = false
 
     $: describing = state.describer === userId
 
@@ -11,10 +12,10 @@
 </script>
 
 {#if describing}
-    <SimpleWordInput bind:valid={state.description} bind:hasInvalid={state.hasInvalid} />
+    <SimpleWordInput bind:valid={state.description} bind:hasInvalid={state.hasInvalid} {requireFocus} />
 {:else}
     <div>
-        {state.description}
+        {state.description || (state.hasInvalid ? undefined : '\u00a0')}
         {#if state.hasInvalid}
             <span class="invalid">...</span>
         {/if}
