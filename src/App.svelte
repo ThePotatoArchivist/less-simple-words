@@ -7,7 +7,7 @@
     let connect = false
     let host = false
 
-    $: sessionId = `less-simple-words-${partialSessionId}`
+    $: sessionId = `lsw-${partialSessionId}`
 </script>
 
 <main>

@@ -36,7 +36,7 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
 
     console.log(host)
 
-    host.on('open', () => console.log('connected'))
+    host.on('open', () => console.log(`connected as ${host.id}`))
 
     host.on('connection', connection => {
         connection.on('open', () => {
@@ -100,7 +100,7 @@ function peerClient<T>(defaultState: T, userId: string, sessionId: string): Sess
     let lastChangeRemote = true
 
     client.on('open', () => {
-        console.log('Connecting')
+        console.log(`Connecting to ${sessionId}`)
         const connection = client.connect(sessionId)
         console.log(connection)
 
