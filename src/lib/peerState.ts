@@ -1,15 +1,14 @@
 import Peer, { type DataConnection } from 'peerjs'
-import { onDestroy } from 'svelte'
 import { writable, type Readable, type Writable } from 'svelte/store'
+
+interface Metadata {
+    id: string
+}
 
 interface Session<T> {
     connected: Readable<string[]> // empty means not connected on the client
     state: Writable<T>
-}
-
-interface IdPacket {
-    type: 'id'
-    id: string
+    destroy(): void
 }
 
 interface ConnectedPacket {
@@ -22,7 +21,7 @@ interface StatePacket<T> {
     state: T
 }
 
-type C2SPacket<T> = IdPacket | StatePacket<T>
+type C2SPacket<T> = StatePacket<T>
 type S2CPacket<T> = ConnectedPacket | StatePacket<T>
 
 function peerHost<T>(initialState: T, userId: string, sessionId: string): Session<T> {
@@ -40,7 +39,9 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
 
     host.on('connection', connection => {
         connection.on('open', () => {
-            console.log('New connection!')
+            console.log(`New connection from ${(connection.metadata as Metadata).id}!`)
+
+            connected.update(connected => [...connected, (connection.metadata as Metadata).id])
 
             const unsubscribeState = state.subscribe(state => {
                 if (lastSource === connection) return
@@ -55,6 +56,7 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
             })
 
             connection.on('close', () => {
+                connected.update(connected => connected.filter(e => e !== (connection.metadata as Metadata).id))
                 unsubscribeState()
                 unsubscribeConnected()
             })
@@ -65,13 +67,6 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
             const packet = data as C2SPacket<T>
 
             switch (packet.type) {
-                case 'id':
-                    console.log(`Identified connection as user ${packet.id}`)
-                    connected.update(connected => [...connected, packet.id])
-                    connection.on('close', () => {
-                        connected.update(connected => connected.filter(e => e !== packet.id))
-                    })
-                    break
                 case 'state':
                     console.log('Received state')
                     lastSource = connection
@@ -86,9 +81,7 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
         state.set(value)
     }
 
-    // onDestroy(() => host.destroy())
-
-    return { state: { ...state, set }, connected }
+    return { state: { ...state, set }, connected, destroy: () => host.destroy() }
 }
 
 
@@ -101,15 +94,13 @@ function peerClient<T>(defaultState: T, userId: string, sessionId: string): Sess
 
     client.on('open', () => {
         console.log(`Connecting to ${sessionId}`)
-        const connection = client.connect(sessionId)
+        const connection = client.connect(sessionId, {metadata: {id: userId} satisfies Metadata})
         console.log(connection)
 
         connection.on('open', () => {
             console.log('Connected')
             lastChangeRemote = true
             
-            connection.send({type: 'id', id: userId} satisfies C2SPacket<T>)
-
             const unsubscribe = state.subscribe(state => {
                 if (lastChangeRemote) return
                 console.log('Sending state')
@@ -144,9 +135,7 @@ function peerClient<T>(defaultState: T, userId: string, sessionId: string): Sess
         state.set(value)
     }
 
-    // onDestroy(() => client.destroy())
-
-    return { state: { ...state, set }, connected }
+    return { state: { ...state, set }, connected, destroy: () => client.destroy() }
 }
 
 export { peerClient, peerHost }
