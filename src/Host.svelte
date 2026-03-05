@@ -7,6 +7,12 @@
     export let sessionId: string
 
     const {state, connected} = peerHost<GameState>({describer: userId /* TODO */, description: '', hasInvalid: false}, userId, sessionId)
+
+    $: {
+        if ($state.describer !== undefined && !$connected.includes($state.describer)) {
+            $state.describer = undefined
+        }
+    }
 </script>
 
 <div>Connected: {$connected}</div>

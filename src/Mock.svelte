@@ -2,12 +2,15 @@
     import type { GameState } from "./data";
     import Game from "./Game.svelte";
 
-    export let userId: string
+    let users: string[] = []
 
-    let users = [userId]
+    let state: GameState = {description: '', hasInvalid: false}
 
-    let state: GameState = {describer: userId, description: '', hasInvalid: false}
-
+    $: {
+        if (state.describer !== undefined && !users.includes(state.describer)) {
+            state.describer = undefined
+        }
+    }
 </script>
 
 {#each users as _, index}
