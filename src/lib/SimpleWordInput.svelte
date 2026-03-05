@@ -1,20 +1,26 @@
 <script lang="ts">
     import type { KeyboardEventHandler } from "svelte/elements";
-    import { NON_MATCHING_WORDS } from "../words";
+    import { INCOMPLETE_WORD, NON_MATCHING_WORDS, } from "../words";
+    import { leastPositive } from "./util";
 
     export let value = ""
     export let requireFocus = false
     export let valid = "" // Read-only
-    export let hasInvalid = false // Read-only
+    export let hasIncomplete = false // Read-only
 
     let active = !requireFocus
 
-    $: index = value.search(NON_MATCHING_WORDS)
+    $: invalidIndex = value.search(NON_MATCHING_WORDS)
     $: [invalid] = value.match(NON_MATCHING_WORDS) ?? []
-    $: hasInvalid = invalid !== undefined
 
-    $: valid = index < 0 ? value : value.substring(0, index)
-    $: ignored = index < 0 ? undefined : value.substring(index + (invalid?.length ?? 0))
+    $: incompleteIndex = value.search(INCOMPLETE_WORD)
+
+    $: ignoredIndex = leastPositive(invalidIndex, incompleteIndex)
+
+    $: hasIncomplete = incompleteIndex >= 0 || invalid !== undefined
+
+    $: valid = ignoredIndex < 0 ? value : value.substring(0, ignoredIndex)
+    $: ignored = ignoredIndex < 0 ? undefined : value.substring(ignoredIndex + (invalid?.length ?? 0))
     
 
     const onKeydown: KeyboardEventHandler<Window> = event => {

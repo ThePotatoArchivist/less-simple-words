@@ -15,15 +15,15 @@
         <button on:click={() => state.describer = userId}>Start Writing</button>
     {:else if describing}
         <div class="content">
-            <SimpleWordInput bind:valid={state.description} bind:hasInvalid={state.hasInvalid} {requireFocus} />
+            <SimpleWordInput bind:valid={state.description} bind:hasIncomplete={state.hasIncomplete} {requireFocus} />
         </div>
         <button on:click={() => state.describer = null}>Stop Writing</button>
     {:else}
         <div class="writer">{state.describer} Is Writing</div>
         <div class="content">
-            {state.description || (state.hasInvalid ? undefined : '\u00a0')}
-            {#if state.hasInvalid}
-                <span class="invalid">...</span>
+            {state.description || (state.hasIncomplete ? undefined : '\u00a0')}
+            {#if state.hasIncomplete}
+                <span class="incomplete">...</span>
             {/if}
         </div>
     {/if}
@@ -50,7 +50,7 @@
         margin: auto;
     }
 
-    .invalid {
-        color: red;
+    .incomplete {
+        color: gray;
     }
 </style>

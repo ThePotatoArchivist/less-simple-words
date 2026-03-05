@@ -4,7 +4,7 @@
 
     let users: string[] = []
 
-    let state: GameState = {describer: null, description: '', hasInvalid: false}
+    let state: GameState = {describer: null, description: '', hasIncomplete: false}
 
     $: {
         if (state.describer !== null && !users.includes(state.describer)) {

@@ -6,7 +6,7 @@
     export let userId: string
     export let sessionId: string
 
-    const {state, connected} = peerHost<GameState>({describer: null, description: '', hasInvalid: false}, userId, sessionId)
+    const {state, connected} = peerHost<GameState>({describer: null, description: '', hasIncomplete: false}, userId, sessionId)
 
     $: {
         if ($state.describer !== null && !$connected.includes($state.describer)) {

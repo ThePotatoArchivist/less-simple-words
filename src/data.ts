@@ -1,5 +1,5 @@
 export interface GameState {
     description: string
-    hasInvalid: boolean
+    hasIncomplete: boolean
     describer: string | null
 }
