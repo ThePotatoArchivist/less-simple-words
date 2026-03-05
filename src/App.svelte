@@ -11,14 +11,12 @@
 </script>
 
 <main>
-    {#if connectionType}
-        {#if connectionType === 'host'}
-            <Host {userId} {sessionId} />
-        {:else if connectionType === 'client'}
-            <Client {userId} {sessionId} />
-        {:else if connectionType === 'mock'}
-            <Mock />
-        {/if}
+    {#if connectionType === 'host'}
+        <Host {userId} {sessionId} />
+    {:else if connectionType === 'client'}
+        <Client {userId} {sessionId} />
+    {:else if connectionType === 'mock'}
+        <Mock />
     {:else}
         <div class="menu">
             <p>

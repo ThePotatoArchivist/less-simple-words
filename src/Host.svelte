@@ -15,6 +15,12 @@
     }
 </script>
 
-<div>Connected: {$connected}</div>
+<div class="connected">Connected: {$connected}</div>
 
 <Game {userId} bind:state={$state} />
+
+<style>
+    .connected {
+        text-align: center;
+    }
+</style>

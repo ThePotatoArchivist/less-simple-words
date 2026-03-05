@@ -7,6 +7,8 @@
     export let requireFocus: boolean = false
 
     $: describing = state.describer === userId
+
+    $: console.log(state)
 </script>
 
 <div class="game">
