@@ -4,11 +4,11 @@
 
     let users: string[] = []
 
-    let state: GameState = {description: '', hasInvalid: false}
+    let state: GameState = {describer: null, description: '', hasInvalid: false}
 
     $: {
-        if (state.describer !== undefined && !users.includes(state.describer)) {
-            state.describer = undefined
+        if (state.describer !== null && !users.includes(state.describer)) {
+            state.describer = null
         }
     }
 </script>

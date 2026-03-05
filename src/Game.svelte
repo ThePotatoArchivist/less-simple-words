@@ -8,17 +8,16 @@
 
     $: describing = state.describer === userId
 
-    $: console.log(state)
 </script>
 
 <div class="game">
-    {#if state.describer === undefined}
+    {#if state.describer === null}
         <button on:click={() => state.describer = userId}>Start Writing</button>
     {:else if describing}
         <div class="content">
             <SimpleWordInput bind:valid={state.description} bind:hasInvalid={state.hasInvalid} {requireFocus} />
         </div>
-        <button on:click={() => state.describer = undefined}>Stop Writing</button>
+        <button on:click={() => state.describer = null}>Stop Writing</button>
     {:else}
         <div class="writer">{state.describer} Is Writing</div>
         <div class="content">
