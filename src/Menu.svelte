@@ -16,6 +16,11 @@
 </script>
 
 <div class="menu">
+    <div>
+        <h1>You Used Some Less Simple Words</h1>
+        <p>A game that is like <em>Poetry For Neanderthals</em> and <em>Thing Explainer</em></p>
+    </div>
+
     <div class="section">
         <label>
             Name
@@ -42,10 +47,14 @@
 
         {#if import.meta.env.DEV}
             <div class="section">
-                <button on:click={() => start('mock', '')}>Mock Game</button>  
+                <button on:click={() => start('mock', '')}>Pretend Game</button>  
             </div>
         {/if}
 
+    </div>
+
+    <div class="info">
+        <p>Thank you to <a href="https://www.xkcd.com/simplewriter/">xkcd.com/simplewriter</a> for the ten hundred words people use the most often</p>
     </div>
 </div>
 
@@ -75,5 +84,9 @@
 
     .game-id {
         width: 4em;
+    }
+
+    .info {
+        font-size: 0.75em;
     }
 </style>
