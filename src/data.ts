@@ -3,3 +3,5 @@ export interface GameState {
     hasIncomplete: boolean
     describer: string | null
 }
+
+export type ConnectionType = 'host' | 'client' | 'mock' | undefined

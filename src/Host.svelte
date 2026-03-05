@@ -5,6 +5,7 @@
 
     export let userId: string
     export let sessionId: string
+    export let partialSessionId: string
 
     const {state, connected} = peerHost<GameState>({describer: null, description: '', hasIncomplete: false}, userId, sessionId)
 
@@ -15,12 +16,12 @@
     }
 </script>
 
-<div class="connected">Connected: {$connected}</div>
+<div class="info">Game ID: {partialSessionId} Connected: {$connected}</div>
 
 <Game {userId} bind:state={$state} />
 
 <style>
-    .connected {
+    .info {
         text-align: center;
     }
 </style>
