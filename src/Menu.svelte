@@ -18,7 +18,7 @@
 <div class="menu">
     <div>
         <h1>You Used Some Less Simple Words</h1>
-        <p>A game that is like <em>Poetry For Neanderthals</em> and <em>Thing Explainer</em></p>
+        <p>A game that is like <em>Poetry for Neanderthals</em> and <em>Thing Explainer</em></p>
     </div>
 
     <div class="section">
