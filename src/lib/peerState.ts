@@ -33,46 +33,47 @@ function peerHost<T>(initialState: T, userId: string, sessionId: string): Sessio
 
     console.log('connecting')
 
-    console.log(host)
-
     host.on('open', () => console.log(`connected as ${host.id}`))
 
     host.on('connection', connection => {
         connection.on('open', () => {
-            console.log(`New connection from ${(connection.metadata as Metadata).id}!`)
+            const id = (connection.metadata as Metadata).id
 
-            connected.update(connected => [...connected, (connection.metadata as Metadata).id])
+            console.log(`New connection from ${id}!`)
+
+            connected.update(connected => [...connected, id])
 
             const unsubscribeState = state.subscribe(state => {
                 if (lastSource === connection) return
                 // else
-                console.log('Sending state')
+                console.log(`Sending state to ${id}`)
                 connection.send({type: 'state', state} satisfies S2CPacket<T>)
             })
 
             const unsubscribeConnected = connected.subscribe(connected => {
-                console.log('Sending connection')
+                console.log(`Sending connection to ${id}`)
                 connection.send({type: 'connected', connected} satisfies S2CPacket<T>)
             })
 
             connection.on('close', () => {
-                connected.update(connected => connected.filter(e => e !== (connection.metadata as Metadata).id))
+                console.log(`${id} disconnected`)
+                connected.update(connected => connected.filter(e => e !== id))
                 unsubscribeState()
                 unsubscribeConnected()
             })
-        })
 
-        connection.on('data', data => {
-            lastSource = connection
-            const packet = data as C2SPacket<T>
+            connection.on('data', data => {
+                lastSource = connection
+                const packet = data as C2SPacket<T>
 
-            switch (packet.type) {
-                case 'state':
-                    console.log('Received state')
-                    lastSource = connection
-                    state.set(packet.state)
-                    break
-            }
+                switch (packet.type) {
+                    case 'state':
+                        console.log(`Received state from ${id}`)
+                        lastSource = connection
+                        state.set(packet.state)
+                        break
+                }
+            })
         })
     })
 
@@ -95,8 +96,7 @@ function peerClient<T>(defaultState: T, userId: string, sessionId: string): Sess
     client.on('open', () => {
         console.log(`Connecting to ${sessionId}`)
         const connection = client.connect(sessionId, {metadata: {id: userId} satisfies Metadata})
-        console.log(connection)
-
+        
         connection.on('open', () => {
             console.log('Connected')
             lastChangeRemote = true
