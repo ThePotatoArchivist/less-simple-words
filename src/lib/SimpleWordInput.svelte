@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { KeyboardEventHandler } from "svelte/elements";
-    import { INCOMPLETE_WORD, NON_MATCHING_WORDS, } from "../words";
+    import { INCOMPLETE_WORD, LAST_WORD, NON_MATCHING_WORDS, } from "../words";
     import { leastPositive } from "./util";
 
     export let value = ""
@@ -28,7 +28,7 @@
 
         if (event.key === 'Backspace' && !event.altKey) {
             if (event.ctrlKey)
-                value = value.substring(0, value.lastIndexOf(' ')) // todo better ctrl+backspace
+                value = value.substring(0, value.search(LAST_WORD))
             else
                 value = value.substring(0, value.length -1)
         } else if (event.key.length === 1 && !event.ctrlKey && !event.altKey) {

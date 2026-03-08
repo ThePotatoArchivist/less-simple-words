@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onDestroy } from "svelte";
     import type { GameState } from "./data";
     import Game from "./Game.svelte";
     import { peerHost } from "./lib/peerState";
@@ -7,7 +8,9 @@
     export let sessionId: string
     export let partialSessionId: string
 
-    const {state, connected} = peerHost<GameState>({describer: null, description: '', hasIncomplete: false}, userId, sessionId)
+    const {state, connected, destroy} = peerHost<GameState>({describer: null, description: '', hasIncomplete: false}, userId, sessionId)
+
+    onDestroy(destroy)
 
     $: {
         if ($state.describer !== null && !$connected.includes($state.describer)) {
